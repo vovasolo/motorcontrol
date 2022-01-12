@@ -1,0 +1,67 @@
+<html>
+<head>
+<!-- CSS goes in the document HEAD or added to your external stylesheet -->
+<style type="text/css">
+table.gridtable {
+	font-family: verdana,arial,sans-serif;
+	font-size:14px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #666666;
+	border-collapse: collapse;
+}
+table.gridtable th {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #dedede;
+}
+table.gridtable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #ffffff;
+}
+</style>
+</head>
+
+<body>
+
+<table class="gridtable" id="results">
+   <tr><th>Monitored parameter</th><th>Value</th></tr>
+   <tr><td>Curent position</td><td id="cur_pos"></td></tr>
+   <tr><td>Target position</td><td id="tar_pos"></td></tr>
+   <tr><td>Speed</td><td id="cur_speed"></td></tr>
+   <tr><td>Torque</td><td id="torque"></td></tr>
+   <tr><td>Motor temperature</td><td id="m_temp"></td></tr>
+</table>
+
+<p>
+	<button id="btn_upd">Update</button>
+	<button id="btn_autoupd">AutoUpdate</button>
+</p>
+
+<p>
+	----Control----
+</p>
+
+<table class="gridtable" id="control">
+	<tr><td>New position</td><td><input type="number" id="set_pos" value="0"></td></tr>
+	<tr><td>Speed</td>       <td><input type="number" id="set_speed" value="1000"></td></tr>
+	<tr><td>Acceleration</td><td><input type="number" id="set_accel" value="500"></td></tr>
+	<tr><td>Deceleration</td><td><input type="number" id="set_decel" value="500"></td></tr>
+ </table>
+
+<p>
+	----Buttons----
+</p>
+
+<button id="btn_start">Start</button>
+<button id="btn_stop">Stop</button>
+
+<script src="/static/jquery.min.js"></script>
+<script src="/static/math.js?r={{reload}}"></script>
+</body>
+</html>
