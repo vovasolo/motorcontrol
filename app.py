@@ -3,7 +3,9 @@ import minimalmodbus
 import time
 app = Flask(__name__)
 
-instrument = minimalmodbus.Instrument('/dev/ttyUSB1', 1, debug = True) 
+serial_device = '/dev/ttyUSB1' # RS485 device in linux
+
+instrument = minimalmodbus.Instrument(serial_device, 1, debug = False) 
 
 instrument.serial.baudrate = 115200
 instrument.serial.bytesize = 8
@@ -41,9 +43,13 @@ def api_info():
 
 @app.route("/api/move")
 def motor_move():
+# get position (steps), default is 0
     pos = int(request.args.get('pos', 0))
-    speed = int(request.args.get('speed', 1000))
+# get speed (steps/s), default 1000, clamped at 5000
+    speed = min(5000, int(request.args.get('speed', 1000)))
+# acceleration after start (steps/s^2), default 500
     accel = int(request.args.get('accel', 500))
+# deceleration before stop (steps/s^2), default 500
     decel = int(request.args.get('decel', 500))
 
     dd_addr = 88
