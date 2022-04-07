@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, render_template, request
 import minimalmodbus
 import time
+import struct
+
 app = Flask(__name__)
 
-serial_device = '/dev/ttyUSB1' # RS485 device in linux
+serial_device = '/dev/ttyUSB0' # RS485 device in linux
 
 instrument = minimalmodbus.Instrument(serial_device, 1, debug = False) 
 
@@ -20,14 +22,22 @@ def to_signed(val):
     else:
         return val
 
+def get_16l(val):
+    l, h = struct.unpack('2H', struct.pack('i', val))
+    return l
+
+def get_16h(val):
+    l, h = struct.unpack('2H', struct.pack('i', val))
+    return h
+
 @app.route("/")
 def main():
     return render_template('main.html', reload = time.time())
 
 @app.route("/api/info")
 def api_info():
-    cur_pos = instrument.read_long(204)
-    tar_pos = instrument.read_long(198)
+    cur_pos = to_signed(instrument.read_long(204))
+    tar_pos = to_signed(instrument.read_long(198))
     cur_speed = to_signed(instrument.read_long(208))
     torque = to_signed(instrument.read_long(214))*0.1
     m_temp = instrument.read_long(250)*0.1
@@ -53,7 +63,7 @@ def motor_move():
     decel = int(request.args.get('decel', 500))
 
     dd_addr = 88
-    instrument.write_registers(dd_addr, [0,0,0,1,0, pos,0,speed,0,accel,0,decel,0,1000,0,1])
+    instrument.write_registers(dd_addr, [0,0,0,1,get_16h(pos),get_16l(pos),0,speed,0,accel,0,decel,0,1000,0,1])
 
     info = {
        "status" : "OK",
